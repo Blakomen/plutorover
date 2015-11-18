@@ -56,7 +56,7 @@ namespace PlutoRover.Tests
         [Test]
         public void move_rover_forwards_and_backwards()
         {
-            RoverState initialState = rover.CurrentState;
+            RoverState initialState = new RoverState { Facing = rover.CurrentState.Facing, X = rover.CurrentState.X, Y = rover.CurrentState.Y };
 
             rover.ExecuteCommands("FBFBFB");
 
@@ -112,9 +112,9 @@ namespace PlutoRover.Tests
         }
 
         [Test]
-        public void MoveRoverInASquare()
+        public void move_rover_in_a_square()
         {
-            RoverState initialState = rover.CurrentState;
+            RoverState initialState = new RoverState { Facing = rover.CurrentState.Facing, X = rover.CurrentState.X, Y = rover.CurrentState.Y };
 
             rover.ExecuteCommands("FFRFF");
 
@@ -133,6 +133,14 @@ namespace PlutoRover.Tests
          * Implement wrapping from one edge of the grid to another. (Pluto is a sphere after all)
          */
 
+        [Test]
+        public void move_rover_wrapping_x_grid_edge()
+        {
+            rover.ExecuteCommands("FFLFF");
+
+            Assert.AreEqual(rover.CurrentState.Facing, Facing.West);
+        }
+
         /*
          * Implement obstacle detection before each move to a new square. If a given
          * sequence of commands encounters an obstacle, the rover moves up to the last
@@ -140,6 +148,15 @@ namespace PlutoRover.Tests
          */
 
 
+        [Test]
+        public void move_rover_with_some_unrecognized_commands()
+        {
+            RoverState initialState = new RoverState { Facing = rover.CurrentState.Facing, X = rover.CurrentState.X, Y = rover.CurrentState.Y };
 
+            rover.ExecuteCommands("FFQBB");                             //I'm not 100% sure about this terminating behavior; but let's roll with it for now.
+
+            Assert.AreEqual(rover.CurrentState.X, initialState.X);
+            Assert.AreNotEqual(rover.CurrentState.Y, initialState.Y);
+        }
     }
 }

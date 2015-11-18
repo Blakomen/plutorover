@@ -41,6 +41,11 @@ namespace PlutoRover
                     case 'R':
                         commandResult = TurnRight();
                         break;
+                    default:
+                        return new CommandResult { 
+                            Message = "Unrecognized command received.", 
+                            RoverState = CurrentState, 
+                            Status = CommandStatus.Failure };
                 }
 
                 if(commandResult.Status == CommandStatus.Failure)

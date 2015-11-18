@@ -61,7 +61,7 @@
   <ItemGroup>
     <Compile Include="PlutoRover.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tests\CoreTests.cs" />
+    <Compile Include="Tests\PlutoRoverTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

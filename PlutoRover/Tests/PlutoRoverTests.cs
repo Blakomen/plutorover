@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace PlutoRover.Tests
 {
     [TestFixture]
-    public class CoreTests
+    public class PlutoRoverTests
     {
 
         PlutoRover rover;
@@ -111,11 +111,23 @@ namespace PlutoRover.Tests
             Assert.AreEqual(rover.CurrentState.Y, 0);
         }
 
-        //[Test]
-        //public void MoveRoverInASquare()
-        //{
+        [Test]
+        public void MoveRoverInASquare()
+        {
+            RoverState initialState = rover.CurrentState;
 
-        //}
+            rover.ExecuteCommands("FFRFF");
+
+            Assert.AreEqual(rover.CurrentState.Facing, Facing.East);
+            Assert.AreEqual(rover.CurrentState.X, 2);
+            Assert.AreEqual(rover.CurrentState.Y, 2);
+
+            rover.ExecuteCommands("RFFRFFR");
+
+            Assert.AreEqual(rover.CurrentState.Facing, initialState.Facing);
+            Assert.AreEqual(rover.CurrentState.X, initialState.X);
+            Assert.AreEqual(rover.CurrentState.Y, initialState.Y);
+        }
 
         /*
          * Implement wrapping from one edge of the grid to another. (Pluto is a sphere after all)

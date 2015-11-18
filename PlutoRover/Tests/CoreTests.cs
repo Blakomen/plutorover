@@ -71,6 +71,46 @@ namespace PlutoRover.Tests
          * spot         
          */
 
+        [Test]
+        public void turn_rover_left()
+        {
+            rover.ExecuteCommands("L");
+
+            Assert.AreEqual(rover.CurrentState.Facing, Facing.West);
+            Assert.AreEqual(rover.CurrentState.X, 0);
+            Assert.AreEqual(rover.CurrentState.Y, 0);
+        }
+
+        [Test]
+        public void turn_rover_right()
+        {
+            rover.ExecuteCommands("R");
+
+            Assert.AreEqual(rover.CurrentState.Facing, Facing.East);
+            Assert.AreEqual(rover.CurrentState.X, 0);
+            Assert.AreEqual(rover.CurrentState.Y, 0);
+        }
+
+        [Test]
+        public void turn_rover_right_twice()
+        {
+            rover.ExecuteCommands("RR");
+
+            Assert.AreEqual(rover.CurrentState.Facing, Facing.South);
+            Assert.AreEqual(rover.CurrentState.X, 0);
+            Assert.AreEqual(rover.CurrentState.Y, 0);
+        }
+
+        [Test]
+        public void turn_rover_360()
+        {
+            rover.ExecuteCommands("LLLL");
+
+            Assert.AreEqual(rover.CurrentState.Facing, Facing.North);
+            Assert.AreEqual(rover.CurrentState.X, 0);
+            Assert.AreEqual(rover.CurrentState.Y, 0);
+        }
+
         //[Test]
         //public void MoveRoverInASquare()
         //{

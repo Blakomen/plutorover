@@ -36,8 +36,10 @@ namespace PlutoRover
                         commandResult = MoveBackward();
                         break;
                     case 'L':
+                        commandResult = TurnLeft();
                         break;
                     case 'R':
+                        commandResult = TurnRight();
                         break;
                 }
 
@@ -97,6 +99,58 @@ namespace PlutoRover
                 RoverState = CurrentState,
                 Status = CommandStatus.Success,
                 Message = String.Format("Rover moved to [{0},{1}]", CurrentState.X, CurrentState.Y)
+            };
+        }
+
+        private CommandResult TurnLeft()
+        {
+            switch(CurrentState.Facing)
+            {
+                case Facing.North:
+                    CurrentState.Facing = Facing.West;
+                    break;
+                case Facing.South:
+                    CurrentState.Facing = Facing.East;
+                    break;
+                case Facing.East:
+                    CurrentState.Facing = Facing.North;
+                    break;
+                case Facing.West:
+                    CurrentState.Facing = Facing.South;
+                    break;
+            }
+
+            return new CommandResult
+            {
+                RoverState = CurrentState,
+                Status = CommandStatus.Success,
+                Message = String.Format("Rover turned left and is now facing {0}", CurrentState.Facing)
+            };
+        }
+
+        private CommandResult TurnRight()
+        {
+            switch (CurrentState.Facing)
+            {
+                case Facing.North:
+                    CurrentState.Facing = Facing.East;
+                    break;
+                case Facing.South:
+                    CurrentState.Facing = Facing.West;
+                    break;
+                case Facing.East:
+                    CurrentState.Facing = Facing.South;
+                    break;
+                case Facing.West:
+                    CurrentState.Facing = Facing.North;
+                    break;
+            }
+
+            return new CommandResult
+            {
+                RoverState = CurrentState,
+                Status = CommandStatus.Success,
+                Message = String.Format("Rover turned right and is now facing {0}", CurrentState.Facing)
             };
         }
     }

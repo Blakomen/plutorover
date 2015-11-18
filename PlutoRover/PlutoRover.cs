@@ -10,7 +10,7 @@ namespace PlutoRover
     {
         //Note: we'll probably eventually need a better world-state tracking to list all the obstacles for task #4
 
-        private int WorldBoundX;
+        private int WorldBoundX;    //Indicates the number of units available, starting from coordinate 0 - eg. when passed a worldbound of 100 and 100, the X wrapping goes    97, 98, 99, 0, 1 
         private int WorldBoundY;
         public RoverState CurrentState;
 
@@ -63,15 +63,31 @@ namespace PlutoRover
             {
                 case Facing.North:
                     CurrentState.Y++;
+                    if(CurrentState.Y == WorldBoundY)
+                    {
+                        CurrentState.Y = 0;
+                    }
                     break;
                 case Facing.South:
                     CurrentState.Y--;
+                    if(CurrentState.Y < 0)
+                    {
+                        CurrentState.Y = WorldBoundY - 1;
+                    }
                     break;
                 case Facing.East:
                     CurrentState.X++;
+                    if(CurrentState.X == WorldBoundX)
+                    {
+                        CurrentState.X = 0;
+                    }
                     break;
                 case Facing.West:
                     CurrentState.X--;
+                    if(CurrentState.X < 0)
+                    {
+                        CurrentState.X = WorldBoundX - 1;
+                    }
                     break;
             }
 
@@ -87,15 +103,31 @@ namespace PlutoRover
             {
                 case Facing.North:
                     CurrentState.Y--;
+                    if(CurrentState.Y < 0)
+                    {
+                        CurrentState.Y = WorldBoundY - 1;
+                    }
                     break;
                 case Facing.South:
                     CurrentState.Y++;
+                    if(CurrentState.Y == WorldBoundY)
+                    {
+                        CurrentState.Y = 0;
+                    }
                     break;
                 case Facing.East:
                     CurrentState.X--;
+                    if(CurrentState.X < 0)
+                    {
+                        CurrentState.X = WorldBoundX - 1;
+                    }
                     break;
                 case Facing.West:
                     CurrentState.X++;
+                    if(CurrentState.X == WorldBoundX)
+                    {
+                        CurrentState.X = 0;
+                    }
                     break;
             }
 

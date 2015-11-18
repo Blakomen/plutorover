@@ -40,7 +40,7 @@ namespace PlutoRover.Tests
 
             Assert.AreEqual(rover.CurrentState.Facing, Facing.North);
             Assert.AreEqual(rover.CurrentState.X, 0);
-            Assert.AreEqual(rover.CurrentState.Y, -1);                      //note: this will have to change when the world wraps
+            Assert.AreEqual(rover.CurrentState.Y, 99);
         }
         
         [Test]
@@ -139,6 +139,28 @@ namespace PlutoRover.Tests
             rover.ExecuteCommands("FFLFF");
 
             Assert.AreEqual(rover.CurrentState.Facing, Facing.West);
+            Assert.AreEqual(rover.CurrentState.X, 98);
+            Assert.AreEqual(rover.CurrentState.Y, 2);
+        }
+
+        [Test]
+        public void move_rover_wrapping_y_grid_edge()
+        {
+            rover.ExecuteCommands("BBRFFFF");
+
+            Assert.AreEqual(rover.CurrentState.Facing, Facing.East);
+            Assert.AreEqual(rover.CurrentState.X, 4);
+            Assert.AreEqual(rover.CurrentState.Y, 98);
+        }
+
+        [Test]
+        public void move_rover_wrapping_diagonally()
+        {
+            rover.ExecuteCommands("BRB");
+
+            Assert.AreEqual(rover.CurrentState.Facing, Facing.East);
+            Assert.AreEqual(rover.CurrentState.X, 99);
+            Assert.AreEqual(rover.CurrentState.Y, 99);
         }
 
         /*

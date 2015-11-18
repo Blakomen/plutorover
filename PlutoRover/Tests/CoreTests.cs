@@ -33,15 +33,15 @@ namespace PlutoRover.Tests
             Assert.AreEqual(rover.CurrentState.Y, 1);
         }
 
-        //[Test]
-        //public void move_rover_backwards()
-        //{
-        //    //rover.MoveBackward();
+        [Test]
+        public void move_rover_backwards()
+        {
+            rover.ExecuteCommands("B");
 
-        //    Assert.AreEqual(rover.CurrentState.Facing, Facing.North);
-        //    Assert.AreEqual(rover.CurrentState.X, 0);
-        //    Assert.AreEqual(rover.CurrentState.Y, -1);                      //note: this will have to change when the world wraps
-        //}
+            Assert.AreEqual(rover.CurrentState.Facing, Facing.North);
+            Assert.AreEqual(rover.CurrentState.X, 0);
+            Assert.AreEqual(rover.CurrentState.Y, -1);                      //note: this will have to change when the world wraps
+        }
         
         [Test]
         public void move_rover_forwards_three_times()
@@ -53,21 +53,23 @@ namespace PlutoRover.Tests
             Assert.AreEqual(rover.CurrentState.Y, 3);
         }
 
-        //[Test]
-        //public void move_rover_forwards_and_backwards()
-        //{
-        //    RoverState initialState = rover.CurrentState;
+        [Test]
+        public void move_rover_forwards_and_backwards()
+        {
+            RoverState initialState = rover.CurrentState;
 
-        //    rover.MoveForward();
-        //    rover.MoveBackward();
-        //}
+            rover.ExecuteCommands("FBFBFB");
+
+            Assert.AreEqual(rover.CurrentState.Facing, initialState.Facing);
+            Assert.AreEqual(rover.CurrentState.X, initialState.X);
+            Assert.AreEqual(rover.CurrentState.Y, initialState.Y);
+        }
 
         /*
          * Implement commands that turn the rover left/right (‘L’,’R’). These commands make
          * the rover spin 90 degrees left or right respectively, without moving from its current
          * spot         
          */
-
 
         //[Test]
         //public void MoveRoverInASquare()

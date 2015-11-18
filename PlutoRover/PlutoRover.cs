@@ -33,6 +33,7 @@ namespace PlutoRover
                         commandResult = MoveForward();
                         break;
                     case 'B':
+                        commandResult = MoveBackward();
                         break;
                     case 'L':
                         break;
@@ -71,6 +72,32 @@ namespace PlutoRover
                 RoverState = CurrentState, 
                 Status = CommandStatus.Success, 
                 Message = String.Format("Rover moved to [{0},{1}]", CurrentState.X, CurrentState.Y) };
+        }
+
+        private CommandResult MoveBackward()
+        {
+            switch (CurrentState.Facing)
+            {
+                case Facing.North:
+                    CurrentState.Y--;
+                    break;
+                case Facing.South:
+                    CurrentState.Y++;
+                    break;
+                case Facing.East:
+                    CurrentState.X--;
+                    break;
+                case Facing.West:
+                    CurrentState.X++;
+                    break;
+            }
+
+            return new CommandResult
+            {
+                RoverState = CurrentState,
+                Status = CommandStatus.Success,
+                Message = String.Format("Rover moved to [{0},{1}]", CurrentState.X, CurrentState.Y)
+            };
         }
     }
 

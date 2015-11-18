@@ -16,7 +16,12 @@ namespace PlutoRover.Tests
         [SetUp]
         public void SetUp() 
         {
-            rover = new PlutoRover(new RoverState { Facing = Facing.North, X = 0, Y = 0 }, 100, 100); 
+            rover = new PlutoRover(
+                        new RoverState { Facing = Facing.North, X = 0, Y = 0 },
+                        100, 
+                        100,
+                        new List<Tuple<int,int>> { new Tuple<int, int> (5,5), 
+                                                   new Tuple<int, int> (5,7) }); 
         }
 
         /*
@@ -169,6 +174,35 @@ namespace PlutoRover.Tests
          * possible point and reports the obstacle.
          */
 
+        //5,5   // 5,7
+        [Test]
+        public void move_rover_with_obstacle()
+        {
+            rover.ExecuteCommands("FFFFFRFFFFF");
+
+            Assert.AreEqual(rover.CurrentState.Facing, Facing.East);
+            Assert.AreEqual(rover.CurrentState.X, 4);
+            Assert.AreEqual(rover.CurrentState.Y, 5);
+            Assert.AreEqual(rover.CurrentState.Status, CommandStatus.Failure);
+        }
+        
+        //[Test]
+        //public void move_rover_with_obstacle_approaching_from_different_facing()
+        //{
+
+        //}
+
+        //[Test]
+        //public void move_rover_between_two_obstacles()
+        //{
+
+        //}
+
+        //[Test]
+        //public void move_rover_to_obstacle_on_wrap_boundary()
+        //{
+                //todo: add a new obstacle
+        //}
 
         [Test]
         public void move_rover_with_some_unrecognized_commands()

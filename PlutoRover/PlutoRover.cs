@@ -12,13 +12,15 @@ namespace PlutoRover
 
         private int WorldBoundX;    //Indicates the number of units available, starting from coordinate 0 - eg. when passed a worldbound of 100 and 100, the X wrapping goes    97, 98, 99, 0, 1 
         private int WorldBoundY;
+        private List<Tuple<int, int>> WorldObstacles;
         public RoverState CurrentState;
 
-        public PlutoRover(RoverState initialState, int worldBoundX, int worldBoundY)
+        public PlutoRover(RoverState initialState, int worldBoundX, int worldBoundY, List<Tuple<int, int>> worldObstacles)
         {
             WorldBoundX = worldBoundX;
             WorldBoundY = worldBoundY;
             CurrentState = initialState;
+            WorldObstacles = worldObstacles;
         }
 
         public CommandResult ExecuteCommands(string commandString)
@@ -42,13 +44,14 @@ namespace PlutoRover
                         commandResult = TurnRight();
                         break;
                     default:
+                        CurrentState.Status = CommandStatus.Failure;
+
                         return new CommandResult { 
                             Message = "Unrecognized command received.", 
-                            RoverState = CurrentState, 
-                            Status = CommandStatus.Failure };
+                            RoverState = CurrentState };
                 }
 
-                if(commandResult.Status == CommandStatus.Failure)
+                if(CurrentState.Status == CommandStatus.Failure)
                 {
                     return commandResult;
                 }
@@ -62,81 +65,181 @@ namespace PlutoRover
             switch(CurrentState.Facing)
             {
                 case Facing.North:
-                    CurrentState.Y++;
-                    if(CurrentState.Y == WorldBoundY)
-                    {
-                        CurrentState.Y = 0;
-                    }
+                    CurrentState.Status = (MoveUp()) ? 
+                        CurrentState.Status = CommandStatus.Success : 
+                        CurrentState.Status = CommandStatus.Failure ;
                     break;
-                case Facing.South:
-                    CurrentState.Y--;
-                    if(CurrentState.Y < 0)
-                    {
-                        CurrentState.Y = WorldBoundY - 1;
-                    }
+                case Facing.South: 
+                    CurrentState.Status = (MoveDown()) ?
+                         CurrentState.Status = CommandStatus.Success :
+                         CurrentState.Status = CommandStatus.Failure;
                     break;
                 case Facing.East:
-                    CurrentState.X++;
-                    if(CurrentState.X == WorldBoundX)
-                    {
-                        CurrentState.X = 0;
-                    }
+                    CurrentState.Status = (MoveRight()) ?
+                         CurrentState.Status = CommandStatus.Success :
+                         CurrentState.Status = CommandStatus.Failure;
                     break;
                 case Facing.West:
-                    CurrentState.X--;
-                    if(CurrentState.X < 0)
-                    {
-                        CurrentState.X = WorldBoundX - 1;
-                    }
+                    CurrentState.Status = (MoveLeft()) ?
+                        CurrentState.Status = CommandStatus.Success :
+                        CurrentState.Status = CommandStatus.Failure;
                     break;
+            }
+
+            string message;
+            if(CurrentState.Status == CommandStatus.Success)
+            {
+                message = String.Format("Rover moved to [{0},{1}]", CurrentState.X, CurrentState.Y);
+            }
+            else
+            {
+                message = String.Format("Obstacle blocked rover movement to [{0},{1}]", CurrentState.X, CurrentState.Y);
             }
 
             return new CommandResult { 
                 RoverState = CurrentState, 
-                Status = CommandStatus.Success, 
-                Message = String.Format("Rover moved to [{0},{1}]", CurrentState.X, CurrentState.Y) };
+                Message = message };
         }
 
         private CommandResult MoveBackward()
         {
+
             switch (CurrentState.Facing)
             {
                 case Facing.North:
-                    CurrentState.Y--;
-                    if(CurrentState.Y < 0)
-                    {
-                        CurrentState.Y = WorldBoundY - 1;
-                    }
+                    CurrentState.Status = (MoveDown()) ?
+                        CurrentState.Status = CommandStatus.Success :
+                        CurrentState.Status = CommandStatus.Failure;
                     break;
                 case Facing.South:
-                    CurrentState.Y++;
-                    if(CurrentState.Y == WorldBoundY)
-                    {
-                        CurrentState.Y = 0;
-                    }
+                    CurrentState.Status = (MoveUp()) ?
+                         CurrentState.Status = CommandStatus.Success :
+                         CurrentState.Status = CommandStatus.Failure;
                     break;
                 case Facing.East:
-                    CurrentState.X--;
-                    if(CurrentState.X < 0)
-                    {
-                        CurrentState.X = WorldBoundX - 1;
-                    }
+                    CurrentState.Status = (MoveLeft()) ?
+                         CurrentState.Status = CommandStatus.Success :
+                         CurrentState.Status = CommandStatus.Failure;
                     break;
                 case Facing.West:
-                    CurrentState.X++;
-                    if(CurrentState.X == WorldBoundX)
-                    {
-                        CurrentState.X = 0;
-                    }
+                    CurrentState.Status = (MoveRight()) ?
+                        CurrentState.Status = CommandStatus.Success :
+                        CurrentState.Status = CommandStatus.Failure;
                     break;
+            }
+
+            string message;
+            if (CurrentState.Status == CommandStatus.Success)
+            {
+                message = String.Format("Rover moved to [{0},{1}]", CurrentState.X, CurrentState.Y);
+            }
+            else
+            {
+                message = String.Format("Obstacle blocked rover movement to [{0},{1}]", CurrentState.X, CurrentState.Y);
             }
 
             return new CommandResult
             {
                 RoverState = CurrentState,
-                Status = CommandStatus.Success,
-                Message = String.Format("Rover moved to [{0},{1}]", CurrentState.X, CurrentState.Y)
+                Message = message
             };
+
+        }
+
+        private bool ObstacleExists(int X, int Y)
+        {
+            //I'm not particularly happy with this as the complexity is poor for large numbers of obstacles
+            //should probably be 2d array or something else
+            //but in the interests of time will leave as is
+            
+            foreach(var obstacle in WorldObstacles)
+            {
+                if(obstacle.Item1 == X && obstacle.Item2 == Y)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool MoveUp()
+        {
+            int targetY = CurrentState.Y + 1;
+
+            if (targetY == WorldBoundY)
+            {
+                targetY = 0;
+            }
+
+            if (ObstacleExists(CurrentState.X, targetY))
+            {
+                return false;
+            }
+            else
+            {
+                CurrentState.Y = targetY;
+                return true;
+            }          
+        }
+
+        private bool MoveDown()
+        {
+            int targetY = CurrentState.Y - 1;
+
+            if (targetY < 0)
+            {
+                targetY = WorldBoundY - 1;
+            }
+
+            if(ObstacleExists(CurrentState.X, targetY))
+            {
+                return false;
+            }
+            else
+            {
+                CurrentState.Y = targetY;
+                return true;
+            }
+        }
+
+        private bool MoveLeft()
+        {
+            int targetX = CurrentState.X - 1;
+            if (targetX < 0)
+            {
+                targetX = WorldBoundX - 1;
+            }
+
+            if(ObstacleExists(targetX, CurrentState.Y))
+            {
+                return false;
+            }
+            else
+            {
+                CurrentState.X = targetX;
+                return true;
+            }
+        }
+
+        private bool MoveRight()
+        {
+            int targetX = CurrentState.X + 1;
+            
+            if (targetX == WorldBoundX)
+            {
+                targetX = 0;
+            }
+
+            if (ObstacleExists(targetX, CurrentState.Y))
+            {
+                return false;
+            }
+            else
+            {
+                CurrentState.X = targetX;
+                return true;
+            }
         }
 
         private CommandResult TurnLeft()
@@ -157,10 +260,11 @@ namespace PlutoRover
                     break;
             }
 
+            CurrentState.Status = CommandStatus.Success;
+
             return new CommandResult
             {
                 RoverState = CurrentState,
-                Status = CommandStatus.Success,
                 Message = String.Format("Rover turned left and is now facing {0}", CurrentState.Facing)
             };
         }
@@ -183,10 +287,11 @@ namespace PlutoRover
                     break;
             }
 
+            CurrentState.Status = CommandStatus.Success;
+
             return new CommandResult
             {
                 RoverState = CurrentState,
-                Status = CommandStatus.Success,
                 Message = String.Format("Rover turned right and is now facing {0}", CurrentState.Facing)
             };
         }
@@ -195,7 +300,6 @@ namespace PlutoRover
     public class CommandResult
     {
         public string Message { get; set; }
-        public CommandStatus Status { get; set;}
         public RoverState RoverState { get; set; }
     }
 
@@ -218,5 +322,6 @@ namespace PlutoRover
         public int X { get; set; }
         public int Y { get; set; }
         public Facing Facing { get; set; }
+        public CommandStatus Status { get; set; }
     }
 }

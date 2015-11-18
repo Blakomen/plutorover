@@ -26,7 +26,7 @@ namespace PlutoRover.Tests
         [Test]
         public void move_rover_fowards()
         {
-            rover.MoveForward();
+            rover.ExecuteCommands("F");
 
             Assert.AreEqual(rover.CurrentState.Facing, Facing.North);
             Assert.AreEqual(rover.CurrentState.X, 0);
@@ -46,9 +46,7 @@ namespace PlutoRover.Tests
         [Test]
         public void move_rover_forwards_three_times()
         {
-            rover.MoveForward();
-            rover.MoveForward();
-            rover.MoveForward();
+            rover.ExecuteCommands("FFF");
 
             Assert.AreEqual(rover.CurrentState.Facing, Facing.North);
             Assert.AreEqual(rover.CurrentState.X, 0);

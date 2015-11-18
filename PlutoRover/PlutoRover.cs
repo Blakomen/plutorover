@@ -21,7 +21,35 @@ namespace PlutoRover
             CurrentState = initialState;
         }
 
-        public CommandResult MoveForward()
+        public CommandResult ExecuteCommands(string commandString)
+        {
+            CommandResult commandResult = null;
+
+            foreach(char command in commandString.ToArray())
+            {
+                switch(command)
+                {
+                    case 'F':
+                        commandResult = MoveForward();
+                        break;
+                    case 'B':
+                        break;
+                    case 'L':
+                        break;
+                    case 'R':
+                        break;
+                }
+
+                if(commandResult.Status == CommandStatus.Failure)
+                {
+                    return commandResult;
+                }
+            }
+
+            return null;
+        }
+
+        private CommandResult MoveForward()
         {
             switch(CurrentState.Facing)
             {
